@@ -33,7 +33,7 @@ class HomePage extends StatelessWidget {
         ),
         SizedBox(height: 40),
         SelectableText(
-          'Hello, I’m a Tarun. I’m a Flutter developer and an avid human. Occasionally, I nap.',
+          'Hello, I’m a Tarun. I’m a Flutter developer.',
           style: Theme.of(context).textTheme.bodyText2,
         ),
         SizedBox(height: 40),

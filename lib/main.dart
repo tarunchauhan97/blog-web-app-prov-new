@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        FutureProvider<List<BlogPost>>(
+        StreamProvider<List<BlogPost>>(
           initialData: [
             BlogPost(title: 'title', publishedDate: DateTime.now(), body: 'body'),
           ],
@@ -66,22 +66,24 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// final _blogPosts = [
-//   BlogPost(title: 'What is Provider?', publishedDate: DateTime.now(), body: 'This is Body'),
-//   BlogPost(
-//       title: 'What is multi-Provider?',
-//       publishedDate: DateTime(2021, 03, 24),
-//       body: 'This is Body'),
-// ];
+// Future<List<BlogPost>> blogPosts() {
+//   return FirebaseFirestore.instance.collection('blogs').get().then((query) {
+//     print('----------------------------');
+//     print(query);
+//     print(query.docs);
+//     print(query.docs.map((e) => e['body']));
+//     print(query.docs.map((e) => e['title']));
+//     print('----------------------------');
+//     return query.docs.map((doc) => BlogPost.fromDocument(doc)).toList();
+//   });
 
-Future<List<BlogPost>> blogPosts() {
-  return FirebaseFirestore.instance.collection('blogs').get().then((query) {
-    print('----------------------------');
-    print(query);
-    print(query.docs);
-    print(query.docs.map((e) => e['body']));
-    print(query.docs.map((e) => e['title']));
-    print('----------------------------');
-    return query.docs.map((doc) => BlogPost.fromDocument(doc)).toList();
+Stream<List<BlogPost>> blogPosts() {
+  return FirebaseFirestore.instance.collection('blogs').snapshots().map((snapshot) {
+    return snapshot.docs.map((doc) => BlogPost.fromDocument(doc)).toList()..sort((first,last){
+      final firstDate = first.publishedDate;
+      final lastDate = last.publishedDate;
+      return -firstDate.compareTo(lastDate);
+
+    });
   });
 }
