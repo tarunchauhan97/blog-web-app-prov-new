@@ -6,6 +6,7 @@ class LoginDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
+    final errorNotifier = ValueNotifier('');
     return Dialog(
       child: Container(
         padding: EdgeInsets.all(20),
@@ -41,23 +42,34 @@ class LoginDialog extends StatelessWidget {
                   'Login',
                   style: TextStyle(color: Colors.blue.shade800),
                 ),
-
                 onPressed: () async {
                   final email = emailController.text;
                   final password = passwordController.text;
-                  final userCred =  await FirebaseAuth.instance
-                      .signInWithEmailAndPassword(email: email, password: password);
-                  Navigator.of(context).pop();
-
-                  // return FirebaseAuth.instance
-                  //     .signInWithEmailAndPassword(
-                  //       email: email,
-                  //       password: password,
-                  //     )
-                  //     .then((_) => Navigator.of(context).pop());
+                  if (email.isEmpty || password.isEmpty) {
+                    errorNotifier.value = 'Please enter in Fields';
+                    return null;
+                  }
+                  final userCred = await FirebaseAuth.instance
+                      .signInWithEmailAndPassword(email: email, password: password)
+                      .then((value) => Navigator.of(context).pop())
+                      .catchError((error) {
+                    //errorNotifier.value = error.toString();
+                    if (error is FirebaseAuthException) {
+                      errorNotifier.value = error.message!;
+                    }
+                  });
                 },
               ),
             ),
+            SizedBox(
+              height: 10,
+            ),
+            ValueListenableBuilder<String>(
+                valueListenable: errorNotifier,
+                builder: (context, value, child) {
+                  if (value.isEmpty) return SizedBox();
+                  return Text(value);
+                }),
           ],
         ),
       ),
