@@ -1,3 +1,4 @@
+import 'package:blog_web_app/blog_entry_page.dart';
 import 'package:blog_web_app/blog_page.dart';
 import 'package:blog_web_app/blog_post.dart';
 import 'package:blog_web_app/blog_scaffold.dart';
@@ -11,7 +12,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final posts = Provider.of<List<BlogPost>>(context, listen: false);
-    final user = Provider.of<User>(context,listen: false);
+    final user = Provider.of<User>(context, listen: false);
     return BlogScaffold(
       //crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -42,6 +43,15 @@ class HomePage extends StatelessWidget {
         ),
         for (var post in posts) BlogListTile(post: post),
       ],
+      floatingActionButton: FloatingActionButton.extended(
+        label: Text('New Blog'),
+        icon: Icon(Icons.add),
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => BlogEntryPage()),
+          );
+        },
+      ),
     );
   }
 }

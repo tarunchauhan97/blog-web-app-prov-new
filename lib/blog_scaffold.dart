@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 class BlogScaffold extends StatelessWidget {
-  BlogScaffold({Key? key, required this.children}) : super(key: key);
+  BlogScaffold({Key? key, required this.children, required this.floatingActionButton})
+      : super(key: key);
 
-  List<Widget> children = [];
+  final List<Widget> children;
+  final Widget floatingActionButton;
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +22,7 @@ class BlogScaffold extends StatelessWidget {
           ),
         ),
       ),
+      floatingActionButton: floatingActionButton,
     );
   }
 }
