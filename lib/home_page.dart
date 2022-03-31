@@ -4,6 +4,7 @@ import 'package:blog_web_app/blog_post.dart';
 import 'package:blog_web_app/blog_scaffold.dart';
 import 'package:blog_web_app/constrained_centre.dart';
 import 'package:blog_web_app/user.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -79,16 +80,47 @@ class BlogListTile extends StatelessWidget {
                 .push(MaterialPageRoute(builder: (context) => BlogPage(blogPost: post)));
           },
         ),
-        SizedBox(height: 10),
-        SelectableText(
-          //'$date',
-          //post.publishedDate,
-          // DateFormat('d MMMM y').format(post.publishedDate),
-          // style: Theme.of(context).textTheme.caption,
-          post.date,
-          style: Theme.of(context).textTheme.caption,
+        SizedBox(height: 6),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SelectableText(
+              post.date,
+              style: Theme.of(context).textTheme.caption,
+            ),
+            PopupMenuButton<Action>(
+              itemBuilder: (context) {
+                return [
+                  PopupMenuItem(
+                    child: Text('Edit'),
+                    value: Action.edit,
+                  ),
+                  PopupMenuItem(
+                    child: Text('Delete'),
+                    value: Action.delete,
+                  ),
+                ];
+              },
+              onSelected: (value) {
+                print(value);
+                print('print(value);$value');
+                switch (value) {
+                  case Action.edit:
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                      return BlogEntryPage(post: post);
+                    }));
+                    break;
+                  case Action.delete:
+                    break;
+                  default:
+                }
+              },
+            ),
+          ],
         ),
       ],
     );
   }
 }
+
+enum Action { edit, delete }

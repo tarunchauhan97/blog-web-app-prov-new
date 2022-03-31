@@ -4,13 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class BlogEntryPage extends StatelessWidget {
-  const BlogEntryPage({Key? key}) : super(key: key);
+  const BlogEntryPage({Key? key, this.post}) : super(key: key);
+  final BlogPost? post;
 
   @override
   Widget build(BuildContext context) {
     var _textTheme = Theme.of(context).textTheme;
-    final titleController = TextEditingController(text: '');
-    final bodyController = TextEditingController(text: '');
+    final titleController = TextEditingController(text: post?.title ?? '');
+    final bodyController = TextEditingController(text: post?.body ?? '');
+    final isEdit = post != null;
     return BlogScaffold(
       children: [
         TextField(
@@ -33,22 +35,32 @@ class BlogEntryPage extends StatelessWidget {
         ),
       ],
       floatingActionButton: FloatingActionButton.extended(
-        label: Text('Submit'),
-        icon: Icon(Icons.book),
+        label: Text(isEdit ? 'Edit' : 'Submit'),
+        icon: isEdit ? Icon(Icons.check) : Icon(Icons.book),
         onPressed: () {
           final title = titleController.text;
           final body = bodyController.text;
-          final blogPost = BlogPost(
-            title: title,
-            publishedDate: DateTime.now(),
-            body: body,
-          ).toMap();
-          FirebaseFirestore.instance
-              .collection('blogs')
-              .add(blogPost)
-              .then((_) => Navigator.of(context).pop());
+          final blogPost =
+              BlogPost(title: title, publishedDate: DateTime.now(), body: body, id: '00');
+          handleBlogUpdate(isEdit: isEdit, newPost: blogPost, oldPost: post!)
+              .then((value) => Navigator.of(context).pop());
+          // FirebaseFirestore.instance.collection('blogs').doc().update(blogPost);
+          // FirebaseFirestore.instance
+          //     .collection('blogs')
+          //     .add(blogPost)
+          //     .then((_) => Navigator.of(context).pop());
         },
       ),
     );
+  }
+}
+
+Future<void> handleBlogUpdate(
+    {required bool isEdit, required BlogPost newPost, required BlogPost oldPost}) async {
+  final newMapPost = newPost.toMap();
+  if (isEdit) {
+    await FirebaseFirestore.instance.collection('blogs').doc(oldPost.id).update(newMapPost);
+  } else {
+    await FirebaseFirestore.instance.collection('blogs').add(newMapPost);
   }
 }

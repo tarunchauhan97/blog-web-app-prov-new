@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
       providers: [
         StreamProvider<List<BlogPost>>(
           initialData: [
-            BlogPost(title: 'title', publishedDate: DateTime.now(), body: 'body'),
+            BlogPost(id: '00',title: 'title', publishedDate: DateTime.now(), body: 'body'),
           ],
           create: (context) => blogPosts(),
         ),
