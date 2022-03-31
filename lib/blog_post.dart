@@ -27,11 +27,16 @@ class BlogPost {
     return BlogPost(
       title: map['title'],
       publishedDate: map['published_date'].toDate(),
-      //publishedDate: map['published_date'].toDate() ?? DateTime.now(),
-      //publishedDate: DateTime.parse(map['published_data'].toDate()),
-      //publishedDate: DateTime.now(),
       body: map['body'],
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'title': title,
+      'body': body,
+      'published_date': Timestamp.fromDate(publishedDate),
+    };
   }
 }
 
