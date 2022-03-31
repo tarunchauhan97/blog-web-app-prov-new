@@ -1,18 +1,17 @@
 import 'package:blog_web_app/blog_post.dart';
 import 'package:blog_web_app/firebase_options.dart';
-import 'package:blog_web_app/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'home_page.dart';
 
-final theme = ThemeData(
+import 'home_page.dart';
+import 'user.dart';
+
+var theme = ThemeData(
   primarySwatch: Colors.blue,
-  scaffoldBackgroundColor: Colors.grey.shade600,
   textTheme: TextTheme(
-    bodyText2: TextStyle(fontSize: 22, height: 1.4),
-    caption: TextStyle(fontSize: 18, height: 1.4),
     headline1: TextStyle(
       fontSize: 45,
       fontWeight: FontWeight.w800,
@@ -23,6 +22,8 @@ final theme = ThemeData(
       fontWeight: FontWeight.w700,
       color: Colors.black,
     ),
+    bodyText2: TextStyle(fontSize: 22, height: 1.4),
+    caption: TextStyle(fontSize: 18, height: 1.4),
   ),
   appBarTheme: AppBarTheme(
     color: Colors.transparent,
@@ -42,48 +43,49 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        StreamProvider<bool>(
+          create: (context) =>
+              FirebaseAuth.instance
+                  .authStateChanges()
+                  .map((user) {
+                print(user);
+                // print('------${user!.email}----');
+                // print('------${user.uid}----');
+                return user != null;
+              }),
+          initialData: false,
+        ),
         StreamProvider<List<BlogPost>>(
-          initialData: [
-            BlogPost(id: '00',title: 'title', publishedDate: DateTime.now(), body: 'body'),
-          ],
+          initialData: [],
           create: (context) => blogPosts(),
         ),
-        // Provider<List<BlogPost>>(create: (context) => _blogPosts),
-        Provider<User>(
-          create: (context) => User(
-              name: 'Flutter Dev',
-              profilePicture: 'https://i.ibb.co/G3ChDNX/MY-PHOTOT-ORIGINAL-Copy-3.jpg'),
-        ),
+        Provider<BlogUser>(
+          create: (context) =>
+              BlogUser(
+                  name: 'Flutter Dev',
+                  profilePicture: 'https://i.ibb.co/G3ChDNX/MY-PHOTOT-ORIGINAL-Copy-3.jpg'),
+        )
       ],
       child: MaterialApp(
-        title: 'Flutter Dev',
-        theme: theme,
         debugShowCheckedModeBanner: false,
+        title: 'Flutter Dev Blog',
+        theme: theme,
         home: HomePage(),
-        //just start
       ),
     );
   }
 }
 
-// Future<List<BlogPost>> blogPosts() {
-//   return FirebaseFirestore.instance.collection('blogs').get().then((query) {
-//     print('----------------------------');
-//     print(query);
-//     print(query.docs);
-//     print(query.docs.map((e) => e['body']));
-//     print(query.docs.map((e) => e['title']));
-//     print('----------------------------');
-//     return query.docs.map((doc) => BlogPost.fromDocument(doc)).toList();
-//   });
-
 Stream<List<BlogPost>> blogPosts() {
-  return FirebaseFirestore.instance.collection('blogs').snapshots().map((snapshot) {
-    return snapshot.docs.map((doc) => BlogPost.fromDocument(doc)).toList()..sort((first,last){
-      final firstDate = first.publishedDate;
-      final lastDate = last.publishedDate;
-      return -firstDate.compareTo(lastDate);
-
-    });
+  return FirebaseFirestore.instance
+      .collection('blogs')
+      .snapshots()
+      .map((snapshot) {
+    return snapshot.docs.map((doc) => BlogPost.fromDocument(doc)).toList()
+      ..sort((first, last) {
+        final firstDate = first.publishedDate;
+        final lastDate = last.publishedDate;
+        return -firstDate.compareTo(lastDate);
+      });
   });
 }

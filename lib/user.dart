@@ -1,5 +1,5 @@
-class User {
-  User({required this.profilePicture, required this.name});
+class BlogUser {
+  BlogUser({required this.profilePicture, required this.name});
 
   final String profilePicture;
 

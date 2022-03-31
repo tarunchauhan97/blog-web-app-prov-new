@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 
 class BlogScaffold extends StatelessWidget {
-  BlogScaffold({Key? key, required this.children, required this.floatingActionButton})
-      : super(key: key);
-
   final List<Widget> children;
-  final Widget floatingActionButton;
+  final Widget? floatingActionButton;
+  final PreferredSizeWidget? appBar;
+
+  const BlogScaffold({Key? key, required this.children, this.floatingActionButton, this.appBar})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: appBar ?? AppBar(),
+      backgroundColor: Colors.blueGrey,
       body: Align(
         alignment: Alignment.topCenter,
         child: Container(
           width: 612,
-          padding: EdgeInsets.symmetric(horizontal: 18),
+          padding: const EdgeInsets.symmetric(horizontal: 18),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

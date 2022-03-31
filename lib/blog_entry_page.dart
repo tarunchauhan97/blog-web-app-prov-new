@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 class BlogEntryPage extends StatelessWidget {
   const BlogEntryPage({Key? key, this.post}) : super(key: key);
+
   final BlogPost? post;
 
   @override
@@ -15,40 +16,36 @@ class BlogEntryPage extends StatelessWidget {
     final isEdit = post != null;
     return BlogScaffold(
       children: [
+        // Title
         TextField(
           controller: titleController,
           maxLines: null,
           style: _textTheme.headline1,
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: 'Title',
-          ),
+          decoration: InputDecoration(border: InputBorder.none, hintText: 'Title'),
         ),
+        // Body
         TextField(
           controller: bodyController,
           maxLines: null,
           style: _textTheme.bodyText2,
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: 'Write your Blog',
-          ),
+          decoration:
+              InputDecoration(border: InputBorder.none, hintText: 'Write your blog here...'),
         ),
       ],
       floatingActionButton: FloatingActionButton.extended(
-        label: Text(isEdit ? 'Edit' : 'Submit'),
-        icon: isEdit ? Icon(Icons.check) : Icon(Icons.book),
+        label: Text(isEdit ? 'Update' : 'Submit'),
+        icon: Icon(isEdit ? Icons.check : Icons.book),
         onPressed: () {
           final title = titleController.text;
           final body = bodyController.text;
-          final blogPost =
-              BlogPost(title: title, publishedDate: DateTime.now(), body: body, id: '00');
-          handleBlogUpdate(isEdit: isEdit, newPost: blogPost, oldPost: post!)
-              .then((value) => Navigator.of(context).pop());
-          // FirebaseFirestore.instance.collection('blogs').doc().update(blogPost);
-          // FirebaseFirestore.instance
-          //     .collection('blogs')
-          //     .add(blogPost)
-          //     .then((_) => Navigator.of(context).pop());
+          final blogPost = BlogPost(title: title, body: body, publishedDate: DateTime.now());
+          handleBlogUpdate(
+            isEdit: isEdit,
+            newPost: blogPost,
+            oldPost: post
+          ).then((value) {
+            Navigator.of(context).pop();
+          });
         },
       ),
     );
@@ -56,10 +53,10 @@ class BlogEntryPage extends StatelessWidget {
 }
 
 Future<void> handleBlogUpdate(
-    {required bool isEdit, required BlogPost newPost, required BlogPost oldPost}) async {
+    {required bool isEdit, required BlogPost newPost, BlogPost? oldPost}) async {
   final newMapPost = newPost.toMap();
   if (isEdit) {
-    await FirebaseFirestore.instance.collection('blogs').doc(oldPost.id).update(newMapPost);
+    await FirebaseFirestore.instance.collection('blogs').doc(oldPost?.id).update(newMapPost);
   } else {
     await FirebaseFirestore.instance.collection('blogs').add(newMapPost);
   }
