@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginDialog extends StatelessWidget {
   @override
@@ -32,9 +33,7 @@ class LoginDialog extends StatelessWidget {
               decoration: InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
-            SizedBox(
-              height: 30,
-            ),
+            SizedBox(height: 30),
             SizedBox(
               width: double.infinity,
               child: TextButton(
@@ -61,18 +60,34 @@ class LoginDialog extends StatelessWidget {
                 },
               ),
             ),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             ValueListenableBuilder<String>(
                 valueListenable: errorNotifier,
                 builder: (context, value, child) {
                   if (value.isEmpty) return SizedBox();
-                  return Text(value);
+                  return Provider<String>.value(
+                    value: value,
+                    child: TextError(),
+                  );
+                  //return Text(value);
+                  // return Provider<String>(
+                  //   create: (context) => value,
+                  //   child: TextError(),
+                  // );
                 }),
           ],
         ),
       ),
     );
+  }
+}
+
+class TextError extends StatelessWidget {
+  const TextError({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final value = Provider.of<String>(context);
+    return Text(value);
   }
 }
