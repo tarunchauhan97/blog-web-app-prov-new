@@ -38,12 +38,12 @@ class BlogEntryPage extends StatelessWidget {
         onPressed: () {
           final title = titleController.text;
           final body = bodyController.text;
-          final blogPost = BlogPost(title: title, body: body, publishedDate: DateTime.now());
-          handleBlogUpdate(
-            isEdit: isEdit,
-            newPost: blogPost,
-            oldPost: post
-          ).then((value) {
+          final blogPost = BlogPost(
+            title: title,
+            body: body,
+            publishedDate: DateTime.now(),
+          );
+          handleBlogUpdate(isEdit: isEdit, newPost: blogPost, oldPost: post).then((value) {
             Navigator.of(context).pop();
           });
         },
