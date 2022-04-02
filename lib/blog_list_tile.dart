@@ -1,6 +1,7 @@
 import 'package:blog_web_app/blog_entry_page.dart';
 import 'package:blog_web_app/blog_page.dart';
 import 'package:blog_web_app/blog_post.dart';
+import 'package:blog_web_app/like_button.dart';
 import 'package:blog_web_app/like_notifier.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,10 @@ class BlogListTile extends StatelessWidget {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) {
-                      return BlogPage(blogPost: post);
+                      return ChangeNotifierProvider.value(
+                        value: likeNotifier,
+                        child: BlogPage(blogPost: post),
+                      );
                     },
                   ),
                 );
@@ -39,14 +43,9 @@ class BlogListTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SelectableText(post.date, style: Theme.of(context).textTheme.caption),
-                TextButton.icon(
-                  onPressed: likeNotifier.toggleLike,
-                  icon: Icon(likeNotifier.isLiked ? Icons.thumb_up : Icons.thumb_up_outlined),
-                  style: TextButton.styleFrom(
-                      primary: likeNotifier.isLiked ? Colors.blueAccent : Colors.black),
-                  label: Text('Like'),
-                ),
-                if (isUserLoggedIn) Blog_PopUp_Menu_Button(post: post),
+                //LikeButton(likeNotifier: likeNotifier),
+                if (!isUserLoggedIn) LikeButton(likeNotifier: likeNotifier),
+                if (isUserLoggedIn) BlogPopUpMenuButton(post: post),
               ],
             ),
             Divider(thickness: 2),
@@ -57,8 +56,8 @@ class BlogListTile extends StatelessWidget {
   }
 }
 
-class Blog_PopUp_Menu_Button extends StatelessWidget {
-  const Blog_PopUp_Menu_Button({
+class BlogPopUpMenuButton extends StatelessWidget {
+  const BlogPopUpMenuButton({
     Key? key,
     required this.post,
   }) : super(key: key);

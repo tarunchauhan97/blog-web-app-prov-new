@@ -1,5 +1,7 @@
 import 'package:blog_web_app/blog_post.dart';
 import 'package:blog_web_app/blog_scaffold.dart';
+import 'package:blog_web_app/like_button.dart';
+import 'package:blog_web_app/like_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -7,13 +9,14 @@ import 'constrained_centre.dart';
 import 'user.dart';
 
 class BlogPage extends StatelessWidget {
-  final BlogPost blogPost;
-
   const BlogPage({Key? key, required this.blogPost}) : super(key: key);
+
+  final BlogPost blogPost;
 
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<BlogUser>(context);
+    final likeNotifier = Provider.of<LikeNotifier>(context);
     return BlogScaffold(
       children: [
         ConstrainedCentre(
@@ -21,10 +24,7 @@ class BlogPage extends StatelessWidget {
         ),
         SizedBox(height: 18),
         ConstrainedCentre(
-          child: SelectableText(
-            user.name,
-            style: Theme.of(context).textTheme.headline5
-          ),
+          child: SelectableText(user.name, style: Theme.of(context).textTheme.headline5),
         ),
         SizedBox(height: 40),
         SelectableText(
@@ -32,9 +32,15 @@ class BlogPage extends StatelessWidget {
           style: Theme.of(context).textTheme.headline1,
         ),
         SizedBox(height: 40),
-        SelectableText(
-          blogPost.date,
-          style: Theme.of(context).textTheme.caption,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SelectableText(
+              blogPost.date,
+              style: Theme.of(context).textTheme.caption,
+            ),
+            LikeButton(likeNotifier: likeNotifier),
+          ],
         ),
         SizedBox(height: 20),
         SelectableText(blogPost.body),
