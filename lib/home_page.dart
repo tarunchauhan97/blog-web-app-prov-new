@@ -15,7 +15,7 @@ import 'user.dart';
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final isUserLoggedIn = Provider.of<bool>(context);
+    final isUserLoggedIn = Provider.of<BlogUser>(context).isLoggedIn;
     final posts = Provider.of<List<BlogPost>>(context);
     final user = Provider.of<BlogUser>(context);
     return BlogScaffold(

@@ -41,30 +41,41 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // final authtyp = FirebaseAuth.instance.authStateChanges();
+    // print(authtyp);
+    // print('-----------${authtyp}---------');
+    // //Instance of '_AsBroadcastStream<User?>'
+    // // I/flutter (10907): -----------Instance of '_AsBroadcastStream<User?>'---------
+    // //
     return MultiProvider(
       providers: [
         StreamProvider<bool>(
-          create: (context) =>
-              FirebaseAuth.instance
-                  .authStateChanges()
-                  .map((user) {
-                print(user);
-                // print('------${user!.email}----');
-                // print('------${user.uid}----');
-                return user != null;
-              }),
+          create: (context) => FirebaseAuth.instance.authStateChanges().map((user) {
+            print(user);
+            print('------${user!.email}----');
+            print('------${user.uid}----');
+            return user != null;
+            //initialData:  StreamProvider.value<User?>(value: null, initialData: null),
+            //initialData: FirebaseAuth.instance.authStateChanges(),
+          }),
           initialData: false,
         ),
         StreamProvider<List<BlogPost>>(
           initialData: [],
           create: (context) => blogPosts(),
         ),
-        Provider<BlogUser>(
-          create: (context) =>
-              BlogUser(
-                  name: 'Flutter Dev',
-                  profilePicture: 'https://i.ibb.co/G3ChDNX/MY-PHOTOT-ORIGINAL-Copy-3.jpg'),
-        )
+        ProxyProvider<User, BlogUser>(
+          create: (context) => BlogUser(
+            name: 'Flutter Dev',
+            profilePicture: 'https://i.ibb.co/G3ChDNX/MY-PHOTOT-ORIGINAL-Copy-3.jpg',
+            isLoggedIn: false,
+          ),
+          update: (context, firebaseUser, blogUser) => BlogUser(
+            profilePicture: blogUser!.profilePicture,
+            name: blogUser.name,
+            isLoggedIn: firebaseUser != null,
+          ),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -77,10 +88,7 @@ class MyApp extends StatelessWidget {
 }
 
 Stream<List<BlogPost>> blogPosts() {
-  return FirebaseFirestore.instance
-      .collection('blogs')
-      .snapshots()
-      .map((snapshot) {
+  return FirebaseFirestore.instance.collection('blogs').snapshots().map((snapshot) {
     return snapshot.docs.map((doc) => BlogPost.fromDocument(doc)).toList()
       ..sort((first, last) {
         final firstDate = first.publishedDate;
