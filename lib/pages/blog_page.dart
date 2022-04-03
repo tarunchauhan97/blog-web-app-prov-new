@@ -1,12 +1,12 @@
-import 'package:blog_web_app/blog_post.dart';
-import 'package:blog_web_app/blog_scaffold.dart';
-import 'package:blog_web_app/like_button.dart';
-import 'package:blog_web_app/like_notifier.dart';
+import 'package:blog_web_app/models/blog_post.dart';
+import 'package:blog_web_app/common_widgets/blog_scaffold.dart';
+import 'package:blog_web_app/common_widgets/like_button.dart';
+import 'package:blog_web_app/models/like_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'constrained_centre.dart';
-import 'user.dart';
+import '../common_widgets/constrained_centre.dart';
+import 'package:blog_web_app/models/user.dart';
 
 class BlogPage extends StatelessWidget {
   const BlogPage({Key? key, required this.blogPost}) : super(key: key);

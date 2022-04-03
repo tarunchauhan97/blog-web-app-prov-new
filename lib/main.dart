@@ -1,13 +1,14 @@
-import 'package:blog_web_app/blog_post.dart';
+import 'package:blog_web_app/models/blog_post.dart';
 import 'package:blog_web_app/firebase_options.dart';
+import 'package:blog_web_app/models/store_item.dart';
+import 'package:blog_web_app/models/user.dart';
+import 'package:blog_web_app/pages/home_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'home_page.dart';
-import 'user.dart';
+import 'package:blog_web_app/models/user.dart';
 
 var theme = ThemeData(
   primarySwatch: Colors.blue,
@@ -44,15 +45,12 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         StreamProvider<bool>(
-          create: (context) =>
-              FirebaseAuth.instance
-                  .authStateChanges()
-                  .map((user) {
-                print(user);
-                // print('------${user!.email}----');
-                // print('------${user.uid}----');
-                return user != null;
-              }),
+          create: (context) => FirebaseAuth.instance.authStateChanges().map((user) {
+            print(user);
+            // print('------${user!.email}----');
+            // print('------${user.uid}----');
+            return user != null;
+          }),
           initialData: false,
         ),
         StreamProvider<List<BlogPost>>(
@@ -60,11 +58,11 @@ class MyApp extends StatelessWidget {
           create: (context) => blogPosts(),
         ),
         Provider<BlogUser>(
-          create: (context) =>
-              BlogUser(
-                  name: 'Flutter Dev',
-                  profilePicture: 'https://i.ibb.co/G3ChDNX/MY-PHOTOT-ORIGINAL-Copy-3.jpg'),
-        )
+          create: (context) => BlogUser(
+              name: 'Flutter Dev',
+              profilePicture: 'https://i.ibb.co/G3ChDNX/MY-PHOTOT-ORIGINAL-Copy-3.jpg'),
+        ),
+        Provider<List<StoreItem>>(create: (context) => _storeItems),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -77,10 +75,7 @@ class MyApp extends StatelessWidget {
 }
 
 Stream<List<BlogPost>> blogPosts() {
-  return FirebaseFirestore.instance
-      .collection('blogs')
-      .snapshots()
-      .map((snapshot) {
+  return FirebaseFirestore.instance.collection('blogs').snapshots().map((snapshot) {
     return snapshot.docs.map((doc) => BlogPost.fromDocument(doc)).toList()
       ..sort((first, last) {
         final firstDate = first.publishedDate;
@@ -89,3 +84,26 @@ Stream<List<BlogPost>> blogPosts() {
       });
   });
 }
+
+final _storeItems = [
+  StoreItem(
+    name: 'Flutter Shirt',
+    price: 12,
+    imageUrl: 'https://i.ibb.co/SdCNQB8/1.png',
+  ),
+  StoreItem(
+    name: 'Flutter Cap',
+    price: 3,
+    imageUrl: 'https://i.ibb.co/gP8BhLr/2.png',
+  ),
+  StoreItem(
+    name: 'Flutter Mug',
+    price: 4,
+    imageUrl: 'https://i.ibb.co/t28Xxzq/3.png',
+  ),
+  StoreItem(
+    name: 'Flutter Bottle',
+    price: 13,
+    imageUrl: 'https://i.ibb.co/bBThnXy/4.png',
+  ),
+];
