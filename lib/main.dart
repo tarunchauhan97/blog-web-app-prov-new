@@ -3,6 +3,7 @@ import 'package:blog_web_app/firebase_options.dart';
 import 'package:blog_web_app/models/store_item.dart';
 import 'package:blog_web_app/models/user.dart';
 import 'package:blog_web_app/pages/home_page.dart';
+import 'package:blog_web_app/pages/store_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -68,7 +69,10 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Flutter Dev Blog',
         theme: theme,
-        home: HomePage(),
+        home: StorePage(),
+        routes: {
+          '/store': (context) => StorePage(),
+        },
       ),
     );
   }

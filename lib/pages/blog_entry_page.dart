@@ -15,6 +15,7 @@ class BlogEntryPage extends StatelessWidget {
     final bodyController = TextEditingController(text: post?.body ?? '');
     final isEdit = post != null;
     return BlogScaffold(
+      isScrollable: true,
       children: [
         // Title
         TextField(
