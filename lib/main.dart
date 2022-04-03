@@ -1,7 +1,9 @@
 import 'package:blog_web_app/models/blog_post.dart';
 import 'package:blog_web_app/firebase_options.dart';
+import 'package:blog_web_app/models/cart_notifier.dart';
 import 'package:blog_web_app/models/store_item.dart';
 import 'package:blog_web_app/models/user.dart';
+import 'package:blog_web_app/pages/checkout_page.dart';
 import 'package:blog_web_app/pages/home_page.dart';
 import 'package:blog_web_app/pages/store_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -66,14 +68,17 @@ class MyApp extends StatelessWidget {
               profilePicture: 'https://i.ibb.co/G3ChDNX/MY-PHOTOT-ORIGINAL-Copy-3.jpg'),
         ),
         Provider<List<StoreItem>>(create: (context) => _storeItems),
+        ChangeNotifierProvider<CartNotifier>(create: (context) => CartNotifier()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Dev Blog',
         theme: theme,
-        home: StorePage(),
+        //home: StorePage(),
+        home: CheckoutPage(),
         routes: {
           '/store': (context) => StorePage(),
+          '/checkout': (context) => CheckoutPage(),
         },
       ),
     );
