@@ -9,6 +9,17 @@ class CartNotifier extends ChangeNotifier {
       imageUrl: 'https://i.ibb.co/SdCNQB8/1.png',
     ),
   ];
+
   List<StoreItem> get items => _items;
 
+  void remove(StoreItem item) {
+    _items.remove(item);
+    notifyListeners();
+  }
+
+  num get totalPrice {
+    return _items.fold(0, (previousValue, storeItem) {
+      return previousValue + storeItem.price;
+    });
+  }
 }

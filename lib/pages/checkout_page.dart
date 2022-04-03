@@ -8,7 +8,9 @@ class CheckoutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _items = context.watch<CartNotifier>().items;
+    //final _items = context.watch()<CartNotifier>().items;
+    var cart = context.watch<CartNotifier>();
+    final _items = cart.items;
     print('-----$_items----');
     //return BlogScaffold(
     return BlogScaffold(
@@ -19,22 +21,51 @@ class CheckoutPage extends StatelessWidget {
         ),
       ),
       //isScrollable: true,
-      body: ListView.builder(
-        itemCount: _items.length,
-        itemBuilder: (context, index) {
-          //final item = _items[index];
-          final item = _items.elementAt(index);
-          return ListTile(
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(item.imageUrl),
+      body: SingleChildScrollView(
+        physics: ScrollPhysics(),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ListView.builder(
+              //physics: NeverScrollableScrollPhysics(),
+              itemCount: _items.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                //final item = _items[index];
+                final item = _items.elementAt(index);
+                return ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage: NetworkImage(item.imageUrl),
+                  ),
+                  title: Text(item.name),
+                  trailing: IconButton(
+                    icon: Icon(Icons.remove_circle_outline),
+                    onPressed: () => context.read<CartNotifier>().remove(item),
+                  ),
+                );
+              },
             ),
-            title: Text(item.name),
-            trailing: IconButton(
-              icon: Icon(Icons.remove_circle_outline),
-              onPressed: () {},
+            SizedBox(
+              height: 200,
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('\$' + cart.totalPrice.toString(),
+                        style: Theme.of(context).textTheme.headline1),
+                    SizedBox(width: 10),
+                    ElevatedButton(
+                        onPressed: () {
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(SnackBar(content: Text('ComingSoon')));
+                        },
+                        child: Text('Buy')),
+                  ],
+                ),
+              ),
             ),
-          );
-        },
+          ],
+        ),
       ),
       isScrollable: true,
       children: [],
