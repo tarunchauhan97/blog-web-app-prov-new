@@ -3,17 +3,22 @@ import 'package:flutter/material.dart';
 
 class CartNotifier extends ChangeNotifier {
   List<StoreItem> _items = [
-    StoreItem(
-      name: 'Flutter Shirt',
-      price: 12,
-      imageUrl: 'https://i.ibb.co/SdCNQB8/1.png',
-    ),
+    // StoreItem(
+    //   name: 'Flutter Shirt',
+    //   price: 12,
+    //   imageUrl: 'https://i.ibb.co/SdCNQB8/1.png',
+    // ),
   ];
 
   List<StoreItem> get items => _items;
 
   void remove(StoreItem item) {
     _items.remove(item);
+    notifyListeners();
+  }
+
+  void add(StoreItem item) {
+    _items.add(item);
     notifyListeners();
   }
 

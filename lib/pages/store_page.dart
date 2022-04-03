@@ -1,4 +1,5 @@
 import 'package:blog_web_app/common_widgets/blog_scaffold.dart';
+import 'package:blog_web_app/models/cart_notifier.dart';
 import 'package:blog_web_app/models/store_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +22,13 @@ class StorePage extends StatelessWidget {
       isScrollable: true,
       appBar: AppBar(
         title: Text('Store', style: TextStyle(color: Colors.black)),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed('/checkout');
+              },
+              icon: Icon(Icons.shopping_cart)),
+        ],
       ),
       children: [],
       body: GridView.count(
@@ -43,6 +51,8 @@ class ItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('item card rebuilt');
+    final isInCart = context.watch<CartNotifier>().items.contains(item);
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 18),
       decoration: BoxDecoration(
@@ -59,7 +69,12 @@ class ItemCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('\$' + item.price.toString()),
-                InkWell(child: TextButton(onPressed: () {}, child: Text('Add to cart')))
+                InkWell(
+                  child: TextButton(
+                    onPressed: isInCart ? null : () => context.read<CartNotifier>().add(item),
+                    child: Text(isInCart ? 'Added' : 'Add to cart'),
+                  ),
+                ),
               ],
             ),
           ],
