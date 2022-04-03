@@ -13,6 +13,8 @@ import 'package:blog_web_app/models/user.dart';
 
 var theme = ThemeData(
   primarySwatch: Colors.blue,
+  scaffoldBackgroundColor: Colors.white70,
+  backgroundColor: Colors.white70,
   textTheme: TextTheme(
     headline1: TextStyle(
       fontSize: 45,
