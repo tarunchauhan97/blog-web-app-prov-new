@@ -52,7 +52,7 @@ class ItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('item card rebuilt');
-    final isInCart = context.watch<CartNotifier>().items.contains(item);
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 18),
       decoration: BoxDecoration(
@@ -69,11 +69,15 @@ class ItemCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('\$' + item.price.toString()),
-                InkWell(
-                  child: TextButton(
-                    onPressed: isInCart ? null : () => context.read<CartNotifier>().add(item),
-                    child: Text(isInCart ? 'Added' : 'Add to cart'),
-                  ),
+                Consumer<CartNotifier>(
+                  builder: (_, cart, child) {
+                    //final isInCart = context.watch<CartNotifier>().items.contains(item);
+                    final isInCart = cart.items.contains(item);
+                    return TextButton(
+                      onPressed: isInCart ? null : () => context.read<CartNotifier>().add(item),
+                      child: Text(isInCart ? 'Added' : 'Add to cart'),
+                    );
+                  },
                 ),
               ],
             ),
